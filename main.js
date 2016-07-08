@@ -3,7 +3,7 @@ var ctx = canvas.getContext('2d');
 
 
 var foxImage = new Image();
-foxImage.src = "fox.png";
+foxImage.src = "fox-night.png";
 
 var rightArrowPress = false;
 var leftArrowPress = false;
@@ -34,7 +34,7 @@ var interactionAlert = {
   x: 150,
   y: 50,
   display: function(fillText) {
-    ctx.fillStyle = 'rgba(0,0,255,.4)';
+    ctx.fillStyle = 'rgba(255,255,255,.8)';
     ctx.textAlign = 'center';
     ctx.font = '20px Arial';
     ctx.fillText (fillText, 400, 150);
