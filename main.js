@@ -20,9 +20,37 @@ var fox = {
     }
 };
 
+var rectangle = {
+  x: 800,
+  y: 360,
+  vx: -1,
+  vy: 0,
+  create: function() {
+    ctx.fillRect (this.x,this.y,25,25);
+  }
+};
+
+var interactionAlert = {
+  x: 150,
+  y: 50,
+  display: function(fillText) {
+    ctx.fillStyle = 'rgba(0,0,255,.4)';
+    ctx.textAlign = 'center';
+    ctx.font = '20px Arial';
+    ctx.fillText (fillText, 400, 150);
+    ctx.fillRect (this.x, this.y, 500, 150);
+  }
+
+}
+
+
 function draw() {
   ctx.clearRect(0,0, canvas.width, canvas.height);
   fox.draw();
+  rectangle.create();
+  collisionDetection();
+  rectangle.x += rectangle.vx;
+  rectangle.y += rectangle.vy;
   if (rightArrowPress) {
     fox.x += fox.vx;
   } else if (leftArrowPress) {
@@ -35,7 +63,31 @@ function draw() {
     fox.y -= fox.vy;
   };
 
+  if (fox.x > canvas.width) {
+    fox.x = 0;
+  };
+
+
 }
+
+function collisionDetection() {
+  var r = rectangle.x;
+  var f = fox.x+110;
+  if (f >= r) {
+    interactionAlert.display("Hello world!");
+    rectangle.vx = 0;
+  }
+}
+
+
+function interactWithSomething() {
+  if (aKeyPress) {
+    //do something;
+  } else if (fKeyPress) {
+    //ignore something;
+  };
+}
+
 
 document.addEventListener("keydown", keyDown, false);
 document.addEventListener("keyup", keyUp, false);
@@ -50,7 +102,11 @@ function keyDown(e) {
     upArrowPress = true;
   } else if (e.keyCode === 38) {
     downArrowPress = true;
-  }
+  } else if (e.keyCode === 65) {
+    aKeyPress = true;
+  } else if (e.keyCode === 70) {
+    fKeyPress = true;
+  } 
 }
 
 function keyUp(e) {
@@ -62,7 +118,11 @@ function keyUp(e) {
     upArrowPress = false;
   } else if (e.keyCode === 38) {
     downArrowPress = false;
-  }
+  } else if (e.keyCode === 65) {
+    aKeyPress = true;
+  } else if (e.keyCode === 70) {
+    fKeyPress = true;
+  } 
 }
 
 

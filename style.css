@@ -8,11 +8,12 @@
   height: 400px;
   position: relative;
   margin: 0 auto;
+  background-image: url('sample-canvas-bg.png')
 }
 
 canvas {
   margin: 0;
   position: absolute;
-  background-color: #eee;
+  /*background-color: #eee;*/
 }
 
