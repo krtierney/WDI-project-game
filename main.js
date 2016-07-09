@@ -11,10 +11,12 @@ var leftArrowPress = false;
 var upArrowPress = false;
 var downArrowPress = false;
 
+var screenCount = 0;
+
 var fox = {
     x: 0,
     y: 300,
-    vx: .5,
+    vx: 1, //reset to .5 after testing
     vy: 1,
     draw: function() {
       ctx.drawImage(foxImage, this.x, this.y, 160, 100);
@@ -26,78 +28,106 @@ var rectangle = {
   y: 360,
   vx: -1,
   vy: 0,
-  create: function() {
-    ctx.fillRect (this.x,this.y,25,25);
-  }
-};
-
-//Draw a streetlamp
-var streetLamp = {
-  x: 448,
-  y: 196,
-  vx: .5,
-  vy: 0,
+  status: true,
   draw: function() {
-    ctx.beginPath();
-    ctx.rect (this.x-30,this.y+54,10,140);
-    ctx.lineTo (this.x-48,this.y+14);
-    ctx.lineTo (this.x-24,this.y-10);
-    ctx.lineTo (this.x,this.y+14);
-    ctx.lineTo (this.x-20, this.y+54); 
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 5.0;
-    ctx.fillStyle = "black";
-    ctx.fill(); 
-    ctx.beginPath();  
-    ctx.fillStyle = "yellow";
-    ctx.moveTo (this.x-26,this.y+44);
-    ctx.lineTo (this.x-22,this.y);
-    ctx.lineTo (this.x-44,this.y+15);
-    ctx.lineTo (this.x-29,this.y+46);  
-    ctx.lineTo (this.x-26,this.y+44);  
-    ctx.fill();   
-    ctx.fillStyle = "yellow";
-    ctx.moveTo (this.x-23,this.y+44);
-    ctx.lineTo (this.x-20,this.y+2);
-    ctx.lineTo (this.x-4,this.y+14);
-    ctx.lineTo (this.x-20,this.y+46);  
-    ctx.lineTo (this.x-23,this.y+44);   
-    ctx.fill(); 
-    ctx.fillStyle = "rgba(255,255,0,.1)";
-    ctx.beginPath(); 
-    ctx.arc (this.x-26,this.y+34, 70, 0, 2 * Math.PI, false); 
-    ctx.fill();
+    if (status === false) {
+    console.log('status is false')
+    } else {
+      ctx.fillRect (this.x,this.y,25,25);
+    }
   }
 };
 
-var interactionAlert = {
-  x: 150,
-  y: 50,
-  display: function(fillText) {
+//Draw a streetlamp constructor
+function StreetLamp(x, y, vx) {
+  this.x = x; //448
+  this.y = y; //196;
+  this.vx = vx //.5;
+  this.vy = 0;
+}
+
+StreetLamp.prototype.draw = function() {
+  ctx.beginPath();
+  ctx.rect (this.x-30,this.y+54,10,140);
+  ctx.lineTo (this.x-48,this.y+14);
+  ctx.lineTo (this.x-24,this.y-10);
+  ctx.lineTo (this.x,this.y+14);
+  ctx.lineTo (this.x-20, this.y+54); 
+  ctx.fillStyle = "black";
+  ctx.fill(); 
+  ctx.beginPath();  
+  ctx.moveTo (this.x-26,this.y+44);
+  ctx.lineTo (this.x-22,this.y);
+  ctx.lineTo (this.x-44,this.y+15);
+  ctx.lineTo (this.x-29,this.y+46);  
+  ctx.lineTo (this.x-26,this.y+44);  
+  ctx.moveTo (this.x-23,this.y+44);
+  ctx.lineTo (this.x-20,this.y+2);
+  ctx.lineTo (this.x-4,this.y+14);
+  ctx.lineTo (this.x-20,this.y+46);  
+  ctx.lineTo (this.x-23,this.y+44);  
+  ctx.fillStyle = "yellow"; 
+  ctx.fill(); 
+  ctx.fillStyle = "rgba(255,255,0,.1)";
+  ctx.beginPath(); 
+  ctx.arc (this.x-26,this.y+34, 70, 0, 2 * Math.PI, false);
+  ctx.fill();
+}
+
+var newLamp = new StreetLamp(448, 196, .5);
+
+//Alert box for dialogue
+// var interactionAlert = {
+//   x: 150,
+//   y: 50,
+//   display: function(fillText) {
+//     ctx.fillStyle = 'rgba(255,255,255,.8)';
+//     ctx.textAlign = 'center';
+//     ctx.font = '20px Arial';
+//     ctx.fillText (fillText, 400, 150);
+//     ctx.fillRect (this.x, this.y, 500, 150);
+//   }
+// }
+
+//Dialogue box constructor
+function DialogueBox(x, y) {
+  this.x = x;
+  this.y = y;
+}
+
+  DialogueBox.prototype.display = function(textToDisplay) {
     ctx.fillStyle = 'rgba(255,255,255,.8)';
     ctx.textAlign = 'center';
     ctx.font = '20px Arial';
-    ctx.fillText (fillText, 400, 150);
+    ctx.fillText (textToDisplay, 400, 150);
     ctx.fillRect (this.x, this.y, 500, 150);
   }
 
-}
+var first = new DialogueBox(150,150);
 
 
+//Main animation function
 function draw() {
   ctx.clearRect(0,0, canvas.width, canvas.height);
+
+  //use screenCount to track how far the fox has gone and control when obstacles are presented
+  if (screenCount <= 0) {
+    meetAnObstacle(rectangle);
+  };
+  newLamp.draw();
   fox.draw();
-  rectangle.create();
-  streetLamp.draw();
-  collisionDetection();
-  rectangle.x += rectangle.vx;
-  rectangle.y += rectangle.vy;
+  keyPadControls();
+  window.requestAnimationFrame(draw); 
+
+}
+
+function keyPadControls() {
   if (rightArrowPress) {
     fox.x += fox.vx;
-    streetLamp.x -= streetLamp.vx;
+    newLamp.x -= newLamp.vx;
   } else if (leftArrowPress) {
     fox.x -= fox.vx;
-    streetLamp.x += streetLamp.vx;
+    newLamp.x += newLamp.vx;
   };
 
   if (downArrowPress && fox.y<300) {
@@ -108,20 +138,29 @@ function draw() {
 
   if (fox.x > canvas.width) {
     fox.x = 0;
+//Edit this line to fine-tune timing of lamp placement
+    newLamp.x = newLamp.x+.5*canvas.width;
+    screenCount++;
   };
-  window.requestAnimationFrame(draw); 
 
+  if (newLamp.x < -20) {
+    newLamp.x = 805;
+  };
 }
 
-function collisionDetection() {
-  var rx = rectangle.x;
-  var ry = rectangle.y;
-  var fx = fox.x+110;
-  var fy = fox.y+85;
-  if (fx >= rx && fy >= ry) {
-    interactionAlert.display("Hello world!");
-    rectangle.vx = 0;
+//Logic for creating obstacles, including collision detection conditions
+function meetAnObstacle(obstacle) {
+  if (obstacle.status === true) {
+    obstacle.draw();
   }
+  var ox = obstacle.x += obstacle.vx;
+  var oy = obstacle.y += obstacle.vy;
+  var fx = fox.x;
+  var fy = fox.y+85;
+  if (((fx+110) >= ox) && ((fx-11) <= ox) && (fy >= oy)) {
+    first.display("Hello world!");
+    obstacle.vx = 0;
+  };
 }
 
 
