@@ -1,9 +1,14 @@
 var canvas = document.getElementById('fox-game');
 var ctx = canvas.getContext('2d');
 window.onload = draw;
+if (window.devicePixelRatio === 2) {
+  canvas.width = 1600;
+  canvas.height = 800;
+} else {
+  canvas.width = 800;
+  canvas.height = 400;
+}
 
-canvas.width = 1600;
-canvas.height = 800;
 canvas.style.width = "800px";
 canvas.style.height = "400px";
 
