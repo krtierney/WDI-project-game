@@ -17,6 +17,8 @@ var leftArrowPress = false;
 var upArrowPress = false;
 var downArrowPress = false;
 var spaceBarPress = false;
+var aPress = false;
+var fPress = false;
 
 var screenCount = 0;
 var playerScore = 100;
@@ -65,13 +67,13 @@ var catImage = new Image();
 catImage.src = "assets/cat.png"; 
 var cat = new Obstacle(1260, 600, 0, 0);
 
-var mouseChatImage = new Image();              
-mouseChatImage.src = "assets/mouse-chat.png";  
-var mouseChat = new Obstacle(1320,750,-2,0)
+// var mouseChatImage = new Image();              
+// mouseChatImage.src = "assets/mouse-chat.png";  
+// var mouseChat = new Obstacle(1320,750,-2,0)
 
 var mouseImage = new Image();              
 mouseImage.src = "assets/mouse.png";  
-var mouse = new Obstacle(1600,700,-2, 0)
+var mouse = new Obstacle(1600,750,-2, 0)
 
 var dogImage = new Image();              
 dogImage.src = "assets/dog.png";  
@@ -189,14 +191,65 @@ function staticCollision(obstacle) {
 }
 
 
-// function interactWithSomething() {
-//   if (aKeyPress) {
-//     first.display("wise choice.");
-//   } else if (fKeyPress) {
-//     ctx.clearRect(0,0, canvas.width, canvas.height);
-//     };
+//second set of chat lines are being served before (instead of) first. callback or closure to push first set to the beginning?
+
+// function mouseChat(callback) {
+//   // setTimeout(function() {
+
+//     var responseA = e.keyCode;
+//     var responseF = e.keyCode;
+//     console.log(responseA);
+//     console.log(responseF);
+//     if (!responseA && responseF) {
+//      first.display("Well, that's a relief!");
+//    } else if (responseA && !responseF) {
+//     first.display("Oh dear. Are you going to eat this mouse? A for yes; F for no.");
+//   }
+// callback();
+//   // }, 30);
 // }
 
+document.addEventListener("keydown", mouseChatChat, false);
+
+function mouseChatChat(e) {
+
+  var responseAA = e.keyCode;
+  var responseFF = e.keyCode;
+  console.log(responseAA);
+  if (responseAA === 65) {
+    first.display("That's a relief!");
+  } else if (responseFF === 70) {
+    first.display("You're slightly less hungry. Move on now.");
+     playerScore = playerScore - 5;
+  }
+}
+
+
+function mouseChat(e) {
+    var responseA = e.keyCode;
+    var responseF = e.keyCode;
+    console.log(responseA);
+    console.log(responseF);
+    if (responseA === 70) {
+     first.display("Well, that's a relief!");
+   } else if (responseF === 65) {
+    first.display("Oh dear. Are you going to eat this mouse? Q for yes; R for no.");
+  };
+  e.keyCode = '';
+}
+
+  document.addEventListener("keydown", mouseChatChat, false);
+
+    function mouseChatChat(e) {
+      var responseAA = e.keyCode;
+      var responseFF = e.keyCode;
+      if (responseFF === 82) {
+        first.display("That's a relief!");
+      } else if (responseAA === 81) {
+        first.display("You're slightly less hungry. Move on now.");
+         playerScore = playerScore - 5;
+      };
+}
 
 
 
@@ -205,15 +258,12 @@ function draw() {
   ctx.clearRect(0,0, canvas.width, canvas.height);
 
 //Starting screen
-  if (screenCount === 0 && fox.x>900) {
+  if (screenCount === 0 && fox.x<1600 && fox.x>700) {
     ctx.clearRect(0,0, canvas.width, canvas.height);
     first.display("Where are you off to in such a hurry?");
-  } else if (screenCount === 0 && fox.x<800 && fox.x>500) {
-      ctx.clearRect(0,0, canvas.width, canvas.height);
-      first.display("Use the arrow keys to move.");
-  } else if (screenCount === 0 && fox.x<200 && fox.x>100) {
-      first.display("Good evening, Fox");
-   }
+  } else if (screenCount === 0 && fox.x<700 && fox.x>100) {
+    first.display("Good evening, Fox");
+  }
 
 
   newLamp.draw();
@@ -222,17 +272,27 @@ function draw() {
     meetAnObstacle(mouse,mouseImage);
     collisionCheck(mouse);
     if (collided === true) {
-        first.display("You've found a mouse. Are you feeling hungry? Y/N");
-        // if (nKeyPress) {
-        //   first.display("That's a relief!");
-        // } else if (yKeyPress) {
+      first.display("You've found a mouse. Are you feeling hungry? A for yes; F for no");
+
+      //These now work, setting each level of dialogue in it's own function with fresh event listeners for distinct keys (using the same keys doesn't work still). Problem: fox disappears at the end of the dialogue chain.
+      document.addEventListener("keydown", mouseChat, false);
+      mouseChat();
+      document.addEventListener("keydown", mouseChatChat, false);
+      mouseChatChat();
+      ctx.clearRect(0,0, canvas.width, canvas.height);
+
+
+        // if (aPress) {
+//nothing here works unless player is holding down the A key (reverts to false on keyup)
+
+        // } else if (fPress) {
         //   first.display("Oh dear. Are you going to eat this mouse? Y/N");
         //     if (nKeyPress) {
         //      first.display("That's a relief!");
         //     } else {
         //       first.display("You're slightly less hungry. Move on now.");
         //       playerScore = playerScore - 5;
-        //     }
+            // }
         // }
     }
   }
@@ -372,6 +432,10 @@ function keyDown(e) {
       break;
     case 40: downArrowPress = true;
       break;
+    case 65: aPress = true;
+      break;
+    case 70: fPress = true;
+      break;
   }
 }
 
@@ -387,6 +451,10 @@ function keyUp(e) {
     case 39: rightArrowPress = false;
       break;
     case 40: downArrowPress = false;
+      break;
+    case 65: aPress = false;
+      break;
+    case 70: fPress = false;
       break;
   }
 }

@@ -18,18 +18,19 @@ body {
   width: 800px;
   height: 400px;
   position: relative;
-  margin: 0 auto;
+  margin: 20px auto 0 auto;
   background-image: url('assets/city-bg.png')
 }
 
 canvas {
-  margin: 0;
   position: absolute;
+  width: 800px;
+  height: 400px;
 }
 
 .text-display {
   width: 500px;
-  margin: 10px auto;
+  margin: 30px auto 0 auto;
   height: 450px;
 }
 
@@ -37,6 +38,7 @@ canvas {
   width: 150px;
   float: left;
   color: white;
+  padding-left: 25px;
 }
 
 h1 {
@@ -51,7 +53,7 @@ h1 {
 .game-notes {
   font-size: 16px;
   float: right;
-  margin: 60px 60px 0 0;
+  margin: 60px 40px 0 0;
   padding-left: 25px;
   color: white;
   border-left: 2px solid rgba(255,255,255,.8);
@@ -59,7 +61,7 @@ h1 {
 .text-box {
   background-color: rgba(255,255,255,.6);
   width: 400px;
-  height: 200px;
+  height: 100px;
   border: 1px solid;
   margin: 0 auto;
   border-radius: 15px;
