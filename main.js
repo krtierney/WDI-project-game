@@ -73,7 +73,7 @@ var mouse = new Sprite(1600,750,-2, 0);
 
 var dogImage = new Image();              
 dogImage.src = 'assets/dog.png';  
-var dog = new Sprite(1200,500,-1,0);
+var dog = new Sprite(1200,450,-1,0);
 
 var owlFlyingImage = new Image();              
 owlFlyingImage.src = 'assets/owl-flying.png';  
@@ -81,15 +81,15 @@ var owlFlying = new Sprite(0,0,3,.5);
 
 var owlImage = new Image();              
 owlImage.src = 'assets/owl.png';  
-var owl = new Sprite(1100,420,.1,0);
+var owl = new Sprite(1100,420,.5,0);
 
 var puddleImage = new Image();              
 puddleImage.src = 'assets/puddle.png';  
-var puddle = new Sprite(1340,720,.1,0);
+var puddle = new Sprite(1340,720,.5,0);
 
 var trashImage = new Image();              
 trashImage.src = 'assets/trash.png';  
-var trash = new Sprite(1280,660,.5,0);
+var trash = new Sprite(1280,680,.5,0);
 
 var shardsImage = new Image();              
 shardsImage.src = 'assets/shards.png';  
@@ -152,7 +152,6 @@ StreetLamp.prototype.draw = function() {
 var lamp = new StreetLamp(1096, 197, 1);
 
 
-
 //-------Dialogue box constructor-------//
 function DialogueBox(x, y, w, h) {
   this.x = x;
@@ -172,7 +171,7 @@ DialogueBox.prototype.display = function(textToDisplay,xOff,yOff) {
 
 
 
-
+//----Main animation loop function----//
 
 function draw() {
   ctx.clearRect(0,0, canvas.width, canvas.height);
@@ -180,11 +179,6 @@ function draw() {
   document.addEventListener('keydown', keyDown, false);
   document.addEventListener('keyup', keyUp, false);
   keyPadControls();
-
-
-
-
-
 
   //Starting screen
   if (screenCount === 0) {
@@ -200,6 +194,7 @@ function draw() {
 
   lamp.draw();
   fox.draw();
+
   document.addEventListener('keydown', keyDown, false);
   document.addEventListener('keyup', keyUp, false);
   keyPadControls();
@@ -221,7 +216,7 @@ function draw() {
 
   if (screenCount === 3) {
     spawnSprite(trash,trashImage);
-    // fixedObstacleShift(trash);
+    fixedObstacleShift(trash);
     staticCollision(trash);
     if ((collided === true) && (screenCount === 3)) {
       document.addEventListener('keydown', trashChat, false);
@@ -231,7 +226,7 @@ function draw() {
 
   if (screenCount === 5) {
     spawnSprite(puddle,puddleImage);
-    // fixedObstacleShift(puddle);
+    fixedObstacleShift(puddle);
     staticCollision(puddle);
     if ((collided === true) && (screenCount === 5)) {
       document.addEventListener('keydown', puddleChat, false);
@@ -241,7 +236,7 @@ function draw() {
 
   if (screenCount === 7) {
     spawnSprite(owl,owlImage);
-    // fixedObstacleShift(owl);
+    fixedObstacleShift(owl);
     staticCollision(owl);
     if ((collided === true) && (screenCount === 7)) {
       document.addEventListener('keydown', owlChat, false);
@@ -249,7 +244,6 @@ function draw() {
     }
   };
 
-  
   if (screenCount === 9) {
     spawnSprite(dog,dogImage);
     collisionCheck(dog);
@@ -258,7 +252,6 @@ function draw() {
       playerScore -= 15;
     };
   }
-
   
   if (screenCount === 10) {
     spawnSprite(cat,catImage);
@@ -268,19 +261,20 @@ function draw() {
       catChat();
     }
   };
-
-
   
   if (screenCount === 11) {
     spawnSprite(shards,shardsImage);
-    // fixedObstacleShift(shards);
+    fixedObstacleShift(shards);
     staticCollision(shards);
     if ((collided === true) && (screenCount === 11)) {    
-      // fox.vx = .1;
+      fox.vx = 1;
+      var ouchBox = new DialogueBox(300,100,1000,100);
+      ouchBox.display = ("Ouch! That broken glass really hurts. Take it slow, now.", 500,50);
+      setTimeout(reset,800);
     };
+    ouchBox = '';
   }
-
-  
+ 
   if (screenCount === 13) {
 
     if (fox.x >= 600){
@@ -301,11 +295,6 @@ function draw() {
   };
 
 
-
-
-
-
-
 function fixedObstacleShift(sprite) {
   if (rightArrowPress) {
     fox.x += fox.vx;
@@ -324,10 +313,6 @@ function keyPadControls() {
       fox.x -= fox.vx;
       lamp.x += lamp.vx;
   };
-
-  // else if (spaceBarPress) {
-  //       fox.x += (3 * fox.vx);
-  //     }
 
   if (downArrowPress && fox.y<600) {
     fox.y += fox.vy;
@@ -541,8 +526,8 @@ function owlChat(e) {
       owlA = '';
       owlB = '';
   }
-
 }
+
 
 function dogChat(e) {
   rightArrowPress = false;
@@ -552,7 +537,6 @@ function dogChat(e) {
   setTimeout(reset, 1000);
   dogA = '';
 }
-
 
 
 function catChat(e) {
