@@ -73,31 +73,48 @@ var cat = new Obstacle(1260, 600, 0, 0);
 
 var mouseImage = new Image();              
 mouseImage.src = "assets/mouse.png";  
-var mouse = new Obstacle(1600,750,-2, 0)
+var mouse = new Obstacle(1600,750,-2, 0);
 
 var dogImage = new Image();              
 dogImage.src = "assets/dog.png";  
-var dog = new Obstacle(1200,500,-1,0)
+var dog = new Obstacle(1200,500,-1,0);
 
 var owlFlyingImage = new Image();              
 owlFlyingImage.src = "assets/owl-flying.png";  
-var owlFlying = new Obstacle(0,0,3,.5)
+var owlFlying = new Obstacle(0,0,3,.5);
 
 var owlImage = new Image();              
 owlImage.src = "assets/owl.png";  
-var owl = new Obstacle(1100,420,.1,0)
+var owl = new Obstacle(1100,420,.1,0);
 
 var puddleImage = new Image();              
 puddleImage.src = "assets/puddle.png";  
-var puddle = new Obstacle(1340,720,.1,0)
+var puddle = new Obstacle(1340,720,.1,0);
 
 var trashImage = new Image();              
 trashImage.src = "assets/trash.png";  
-var trash = new Obstacle(1280,660,.5,0)
+var trash = new Obstacle(1280,660,.5,0);
 
 var shardsImage = new Image();              
 shardsImage.src = "assets/shards.png";  
-var shards = new Obstacle(1200,700,.5,0)
+var shards = new Obstacle(1200,700,.5,0);
+
+var houseImage = new Image();
+houseImage.src = "assets/house.png";
+var house = new Obstacle(1100,100,0,0);
+
+var foodImage = new Image();
+foodImage.src = "assets/food.png";
+var food = new Obstacle(1000,700,0,0);
+
+var fireworkspImage = new Image();
+fireworkspImage.src = "assets/fireworksp.png";
+var fireworksp = new Obstacle(50,150,0,0);
+
+var fireworksImage = new Image();
+fireworksImage.src = "assets/fireworks.png";
+var fireworks = new Obstacle(800,75,0,0);
+
 
 
 //Draw a streetlamp constructor
@@ -155,8 +172,21 @@ DialogueBox.prototype.display = function(textToDisplay) {
   ctx.font = '30px Arial';
   ctx.fillStyle = 'black';
   ctx.fillText (textToDisplay, this.x+500, this.y+60);
-
 }
+
+var winAlert = {
+  display: function(textToDisplay,x,y) {
+    ctx.font = "50px 'Taviraj', sans-serif";
+    ctx.fillStyle = 'rgba(191,63,191,.8)';
+    ctx.fillText (textToDisplay, x, y);
+  }
+};
+
+
+
+
+
+
 function draw() {
   ctx.clearRect(0,0, canvas.width, canvas.height);
   fox.draw();
@@ -294,7 +324,21 @@ function draw() {
 
   
   if (screenCount === 13) {
-    meetAnObstacle(rectangle);
+
+    if (fox.x >= 600){
+      fox.vx = 0;
+      if (playerScore > 0) {
+        winAlert.display("You made it! Well done, you.", 500, 150);
+        winAlert.display("Your score is " + playerScore, 500, 200);
+        meetAnObstacle(house, houseImage);
+        meetAnObstacle(food, foodImage);
+        meetAnObstacle(fireworksp, fireworkspImage);
+        meetAnObstacle(fireworks, fireworksImage);
+      } else if (playerScore <= 0) {
+        var loseBox = new DialogueBox(300,200,1000,100);
+        loseBox.display("Sorry, you won't find it tonight. Score: " + playerScore);
+      }
+    }
   };
 
 
