@@ -1,5 +1,20 @@
+document.getElementById('mute').addEventListener('click', toggleAudio);
+var playing = true;
+function toggleAudio() {
+  var audio = document.getElementsByTagName("audio")[0];
+  if (playing) {
+    audio.pause(); 
+    document.getElementById('mute').innerHTML = "&#128263";
+  } else {
+    audio.play();
+    document.getElementById('mute').innerHTML = "&#128266;";
+  }
+  playing = !playing;
+}
+
 var canvas = document.getElementById('fox-game');
 var ctx = canvas.getContext('2d');
+
 window.onload = draw;
 // if (window.devicePixelRatio === 2) {
   canvas.width = 1600;
