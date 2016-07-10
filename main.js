@@ -157,107 +157,48 @@ DialogueBox.prototype.display = function(textToDisplay) {
   ctx.fillText (textToDisplay, this.x+500, this.y+60);
 
 }
-
-var first = new DialogueBox(300,100,1000,100);
-
-
-
-
-//Logic for creating obstacles, including collision detection conditions
-function meetAnObstacle(obstacle, image) {
-  obstacle.draw(image);
-}
-
-function collisionCheck(obstacle) {
-    var ox = obstacle.x += obstacle.vx;
-    var oy = obstacle.y += obstacle.vy;
-    var fx = fox.x;
-    var fy = fox.y+170;
-    if (((fx+220) >= ox) && ((fx-22) <= ox) && (fy >= oy)) {
-      obstacle.vx = 0;
-      collided = true;
-    };
-  }
-
-function staticCollision(obstacle) {
-  if (rightArrowPress) {
-    var ox = obstacle.x -= obstacle.vx;
-    var fx = fox.x;
-    var fy = fox.y+170;
-    if (((fx+220) >= ox) && ((fx-22) <= ox)) {
-      collided = true;
-    };
-  }
-}
-
-
-//second set of chat lines are being served before (instead of) first. callback or closure to push first set to the beginning?
-
-// function mouseChat(callback) {
-//   // setTimeout(function() {
-
-//     var responseA = e.keyCode;
-//     var responseF = e.keyCode;
-//     console.log(responseA);
-//     console.log(responseF);
-//     if (!responseA && responseF) {
-//      first.display("Well, that's a relief!");
-//    } else if (responseA && !responseF) {
-//     first.display("Oh dear. Are you going to eat this mouse? A for yes; F for no.");
-//   }
-// callback();
-//   // }, 30);
-// }
-
-document.addEventListener("keydown", mouseChatChat, false);
-
-function mouseChatChat(e) {
-
-  var responseAA = e.keyCode;
-  var responseFF = e.keyCode;
-  console.log(responseAA);
-  if (responseAA === 65) {
-    first.display("That's a relief!");
-  } else if (responseFF === 70) {
-    first.display("You're slightly less hungry. Move on now.");
-     playerScore = playerScore - 5;
-  }
-}
-
-
-function mouseChat(e) {
-    var responseA = e.keyCode;
-    var responseF = e.keyCode;
-    console.log(responseA);
-    console.log(responseF);
-    if (responseA === 70) {
-     first.display("Well, that's a relief!");
-   } else if (responseF === 65) {
-    first.display("Oh dear. Are you going to eat this mouse? Q for yes; R for no.");
-  };
-  e.keyCode = '';
-}
-
-  document.addEventListener("keydown", mouseChatChat, false);
-
-    function mouseChatChat(e) {
-      var responseAA = e.keyCode;
-      var responseFF = e.keyCode;
-      if (responseFF === 82) {
-        first.display("That's a relief!");
-      } else if (responseAA === 81) {
-        first.display("You're slightly less hungry. Move on now.");
-         playerScore = playerScore - 5;
-      };
-}
-
-
-
-//Main animation function
 function draw() {
   ctx.clearRect(0,0, canvas.width, canvas.height);
+  fox.draw();
+  newLamp.draw();
 
-//Starting screen
+  keyPadControls();
+
+  var first = new DialogueBox(300,100,1000,100);
+  var second = new DialogueBox(300,200,1000,100);
+
+
+
+  //Logic for creating obstacles, including collision detection conditions
+  function meetAnObstacle(obstacle, image) {
+    obstacle.draw(image);
+  }
+
+  function collisionCheck(obstacle) {
+      var ox = obstacle.x += obstacle.vx;
+      var oy = obstacle.y += obstacle.vy;
+      var fx = fox.x;
+      var fy = fox.y+170;
+      if (((fx+220) >= ox) && ((fx-22) <= ox) && (fy >= oy)) {
+        obstacle.vx = 0;
+        collided = true;
+      };
+    }
+
+  function staticCollision(obstacle) {
+    if (rightArrowPress) {
+      var ox = obstacle.x -= obstacle.vx;
+      var fx = fox.x;
+      var fy = fox.y+170;
+      if (((fx+220) >= ox) && ((fx-22) <= ox)) {
+        collided = true;
+      };
+    }
+  }
+
+
+
+  //Starting screen
   if (screenCount === 0 && fox.x<1600 && fox.x>700) {
     ctx.clearRect(0,0, canvas.width, canvas.height);
     first.display("Where are you off to in such a hurry?");
@@ -267,35 +208,16 @@ function draw() {
 
 
   newLamp.draw();
-  
+  fox.draw();
+
   if (screenCount === 1) {
     meetAnObstacle(mouse,mouseImage);
     collisionCheck(mouse);
-    if (collided === true) {
-      first.display("You've found a mouse. Are you feeling hungry? A for yes; F for no");
-
-      //These now work, setting each level of dialogue in it's own function with fresh event listeners for distinct keys (using the same keys doesn't work still). Problem: fox disappears at the end of the dialogue chain.
+    if ((collided === true) && (screenCount === 1)) {
       document.addEventListener("keydown", mouseChat, false);
       mouseChat();
-      document.addEventListener("keydown", mouseChatChat, false);
-      mouseChatChat();
-      ctx.clearRect(0,0, canvas.width, canvas.height);
-
-
-        // if (aPress) {
-//nothing here works unless player is holding down the A key (reverts to false on keyup)
-
-        // } else if (fPress) {
-        //   first.display("Oh dear. Are you going to eat this mouse? Y/N");
-        //     if (nKeyPress) {
-        //      first.display("That's a relief!");
-        //     } else {
-        //       first.display("You're slightly less hungry. Move on now.");
-        //       playerScore = playerScore - 5;
-            // }
-        // }
     }
-  }
+  };
   
   if (screenCount === 2 || screenCount === 4) {
     //owl flies wrong direction: fix
@@ -303,14 +225,17 @@ function draw() {
     owlFlying.x += owlFlying.vx;
     owlFlying.y += owlFlying.vy;
   };
+  newLamp.draw();
+  fox.draw();
 
   
   if (screenCount === 3) {
     meetAnObstacle(trash,trashImage);
     fixedObstacleShift(trash);
     staticCollision(trash);
-    if (collided === true) {
-      first.display("Looks like a nice pile of rubbish! Smell tasty? Y/N");
+    if ((collided === true) && (screenCount === 3)) {
+      document.addEventListener("keydown", trashChat, false);
+      trashChat();
     }
   };
 
@@ -319,8 +244,9 @@ function draw() {
     meetAnObstacle(puddle,puddleImage);
     fixedObstacleShift(puddle);
     staticCollision(puddle);
-    if (collided === true) {
-      first.display("*sniff* Smells like another fox. Look for him? Y/N");
+    if ((collided === true) && (screenCount === 5)) {
+      document.addEventListener("keydown", puddleChat, false);
+      puddleChat();
     }
   };
 
@@ -329,8 +255,9 @@ function draw() {
     meetAnObstacle(owl,owlImage);
     fixedObstacleShift(owl);
     staticCollision(owl);
-    if (collided === true) {
-      first.display("'Hello there, Fox. I've been following you.'");
+    if ((collided === true) && (screenCount === 7)) {
+      document.addEventListener("keydown", owlChat, false);
+      owlChat();
     }
   };
 
@@ -338,8 +265,9 @@ function draw() {
   if (screenCount === 9) {
     meetAnObstacle(dog,dogImage);
     collisionCheck(dog);
-    if (collided === true) {
+    if ((collided === true) && (screenCount === 9)) {
       first.display("'Grrr! Arf!'");
+      playerScore -= 15;
     };
   }
 
@@ -347,8 +275,9 @@ function draw() {
   if (screenCount === 10) {
     meetAnObstacle(cat,catImage);
     staticCollision(cat);
-    if (collided === true) {
-      first.display("Cat: Friend or Food? Y for friend, N for food.")
+    if ((collided === true) && (screenCount === 10)) {
+      document.addEventListener("keydown", catChat, false);
+      catChat();
     }
   };
 
@@ -358,7 +287,7 @@ function draw() {
     meetAnObstacle(shards,shardsImage);
     fixedObstacleShift(shards);
     staticCollision(shards);
-    if (collided === true) {    
+    if ((collided === true) && (screenCount === 11)) {    
       // fox.vx = .1;
     };
   }
@@ -367,14 +296,6 @@ function draw() {
   if (screenCount === 13) {
     meetAnObstacle(rectangle);
   };
-
-
-  fox.draw();
-  keyPadControls();
-  window.requestAnimationFrame(draw); 
-}
-
-
 
 
 
@@ -432,10 +353,10 @@ function keyDown(e) {
       break;
     case 40: downArrowPress = true;
       break;
-    case 65: aPress = true;
-      break;
-    case 70: fPress = true;
-      break;
+    // case 65: aPress = true;
+    //   break;
+    // case 70: fPress = true;
+    //   break;
   }
 }
 
@@ -452,11 +373,174 @@ function keyUp(e) {
       break;
     case 40: downArrowPress = false;
       break;
-    case 65: aPress = false;
-      break;
-    case 70: fPress = false;
-      break;
+    // case 65: aPress = false;
+    //   break;
+    // case 70: fPress = false;
+    //   break;
   }
+}
+
+
+
+  window.requestAnimationFrame(draw); 
+
+
+
+}
+
+var first = new DialogueBox(300,100,1000,100);
+var second = new DialogueBox(300,200,1000,100);
+
+//Obstacle dialogue flow and content
+function mouseChat(e) {
+  first.display("You've found a mouse. Are you feeling hungry? A for yes; F for no");
+  var response = '';
+  response = e.keyCode;
+  switch(response) {
+    case 70: 
+      first.display("Well, that's a relief! Off you pop, then.");
+      collisionAvoid(mouse);
+      reset();
+        break;
+    case 65:
+      first.display("Oh dear. Are you going to eat this mouse? Q for yes; R for no.");
+      document.addEventListener("keydown", function(e) {
+        first.display("Oh dear. Are you going to eat this mouse? Q for yes; R for no.");
+        var response = e.keyCode;
+        switch(response) {
+          case 81: 
+            first.display("You're slightly less hungry. Move on now.");
+            playerScore = playerScore - 5;
+            collisionAvoid(mouse);
+            setTimeout(reset, 500);
+            break;
+          case 82:
+            first.display("Well, that's a relief! He's heading home to the heath.");
+            collisionAvoid(mouse);
+            reset();
+              break;
+        }
+      }, false)();
+
+      collisionAvoid(mouse);
+      reset();
+        break;
+  }
+}
+
+
+
+
+function trashChat(e) {
+  first.display("Mmm, a pile of rubbish! Smell tasty? A for yes; F for no.");
+  var response = '';
+  response = e.keyCode;
+  switch(response) {
+    case 65: 
+      first.display("You found some edible scraps, but got your paws dirty.");
+      collisionAvoid(trash);
+      playerScore -= 5;
+      setTimeout(reset, 500);
+        break;
+    case 70:
+      first.display("Yeah, you're right. Let's skip it.");
+      collisionAvoid(trash);
+      reset();
+        break;
+  }
+}
+
+
+
+function puddleChat(e) {
+    first.display("*sniff* Smells like another fox. Look for him? A for yes; F for no.");
+  var response = '';
+  response = e.keyCode;
+  switch(response) {
+    case 65: 
+      first.display("You know, I don't think that's a good idea right now.");
+      playerScore -= 5;
+      collisionAvoid(puddle);
+      reset();
+        break;
+    case 70:
+      first.display("That's probably for the best. We have things to do.");
+      collisionAvoid(puddle);
+      reset();
+        break;
+  }
+}
+
+function owlChat(e) {
+  first.display("'Hello there, Fox. I've been following you. Have you seen any mice?'");
+  second.display("Press A to help the owl. Press F if you'd rather not.");
+  var response = '';
+  response = e.keyCode;
+  switch(response) {
+    case 70: 
+      first.display("'What a shame. See you around, Fox.'");
+      collisionAvoid(owl);
+      playerScore = playerScore - 50;
+      reset();
+        break;
+    case 65:
+      first.display("'You have? Where?' Press Q for Relay Building; R for the heath.");
+        second.display('');
+      document.addEventListener("keydown", function(e) {
+        var response = e.keyCode;
+        switch(response) {
+          case 81: 
+            first.display("Well, I'll have a look. Thanks, Fox.");
+            playerScore = playerScore - 30;
+            collisionAvoid(owl);
+            setTimeout(reset, 500);
+            break;
+          case 82:
+            first.display("Thanks for the help! Say hi to the cat for me, okay?");
+            collisionAvoid(owl);
+            reset();
+              break;
+        }
+      }, false)();
+
+      collisionAvoid(owl);
+      reset();
+        break;
+  }
+}
+
+function catChat(e) {
+  first.display("Cat! Friend or Food? F for friend. A for food.");
+  var response = '';
+  response = e.keyCode;
+  switch(response) {
+    case 70: 
+      first.display("Wow. You must really be hungry.");
+      collisionAvoid(cat);
+      playerScore -= 100;
+      setTimeout(reset, 500);
+        break;
+    case 65:
+      first.display("'Nice to see you again, Fox. You're almost there.'");
+      collisionAvoid(cat);
+      playerScore += 40;
+      setTimeout(reset, 500);
+        break;
+  }
+}
+
+function reset() {
+  setTimeout(function() {
+    window.requestAnimationFrame(draw);
+    first.display('');
+    second.display('');
+  }, 1000);
+  response = '';
+}
+
+function collisionAvoid(obstacle) {
+  obstacle.x = obstacle.x - 250;
+  collided = false;
 }
 
 window.requestAnimationFrame(draw);
