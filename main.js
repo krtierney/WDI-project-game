@@ -45,22 +45,13 @@ foxImage.src = 'assets/fox-night.png';
 var fox = {
     x: 0,
     y: 600,
-    vx: 2, //reset to .5 after testing
+    vx: 2, //reset to 1 after testing
     vy: 2,
     draw: function() {
       ctx.drawImage(foxImage, this.x, this.y, 320, 200);
     }
 };
 
-// var rectangle = {
-//  x: 1600,
-//  y: 720,
-//  vx: -2,
-//  vy: 0,
-//  draw: function() {
-//    ctx.fillRect (this.x,this.y,50,50);
-//  }
-// };
 
 //-------Construct sprites----------//
 function Sprite(x, y, vx, vy) {
@@ -184,7 +175,13 @@ DialogueBox.prototype.display = function(textToDisplay,xOff,yOff) {
   ctx.fillText (textToDisplay, this.x+xOff, this.y+yOff);
 }
 
-
+var winAlert = {
+  display: function(textToDisplay,x,y) {
+    ctx.font = '50px "Taviraj", sans-serif';
+    ctx.fillStyle = 'rgba(191,63,191,.8)';
+    ctx.fillText (textToDisplay, x, y);
+  }
+};
 
 //----Main animation loop function----//
 
@@ -281,6 +278,7 @@ function draw() {
     spawnSprite(shards,shardsImage);
     fixedObstacleShift(shards);
     staticCollision(shards);
+    //none of this works for some reason...
     if ((collided === true) && (screenCount === 11)) {    
       fox.vx = 1;
       var ouchBox = new DialogueBox(300,100,1000,100);
@@ -291,7 +289,6 @@ function draw() {
   }
  
   if (screenCount === 13) {
-
     if (fox.x >= 600){
       fox.vx = 0;
       if (playerScore > 0) {
@@ -302,9 +299,9 @@ function draw() {
         spawnSprite(fireworksp, fireworkspImage);
         spawnSprite(fireworks, fireworksImage);
       } else if (playerScore <= 0) {
-        var loseBox = new DialogueBox(300,200,1000,100);
+        var loseBox = new DialogueBox(350,200,900,100);
         //Not sure what broke this display, but figure out.
-        loseBox.display("Sorry, you won't find it tonight. Score: " + playerScore);
+        loseBox.display("Sorry, you won't find it tonight. Score: " + playerScore, 500, 50);
       }
     }
   };
@@ -418,14 +415,14 @@ function staticCollision(sprite) {
 function mouseChat(e) {
   rightArrowPress = false;
   var mouseA = new DialogueBox(300,100,1000,100);
-  mouseA.display("You've found a mouse. Are you feeling hungry? A for yes; F for no", 500, 50);
+  mouseA.display("You've found a mouse. Are you feeling hungry? A for yes; F for no.", 500, 50);
   var response = '';
   response = e.keyCode;
   switch(response) {
     case 70: 
       mouseA.display("Well, that's a relief! Off you pop, then.", 500, 50);
-      collisionAvoid(mouse);
-      setTimeout(reset, 600);
+      collisionAvoid(mouse, 250);
+      setTimeout(reset, 800);
         break;
     case 65:
       mouseA.display("Oh dear. Are you going to eat this mouse? Q for yes; R for no.", 500, 50);
@@ -435,20 +432,20 @@ function mouseChat(e) {
         switch(response) {
           case 81: 
             mouseA.display("You're slightly less hungry. Move on now.", 500, 50);
-            playerScore = playerScore - 5;
-            collisionAvoid(mouse);
+            playerScore -= 5;
+            collisionAvoid(mouse, 250);
             screenCount = 2;
             setTimeout(reset, 500);
             break;
           case 82:
             mouseA.display("Well, that's a relief! He's heading home to the heath.", 500, 50);
-            collisionAvoid(mouse);
+            collisionAvoid(mouse, 250);
             setTimeout(reset, 500);
               break;
         }
       }, false)();
 
-      collisionAvoid(mouse);
+      collisionAvoid(mouse, 250);
       setTimeout(reset, 500);
         break;
   }
@@ -465,13 +462,13 @@ function trashChat(e) {
   switch(response) {
     case 65: 
       trashA.display("You found some edible scraps, but got your paws dirty.", 500, 50);
-      collisionAvoid(trash);
+      collisionAvoid(trash, 350);
       playerScore -= 5;
       setTimeout(reset, 700);
         break;
     case 70:
       trashA.display("Yeah, you're right. Let's skip it.", 500, 50);
-      collisionAvoid(trash);
+      collisionAvoid(trash, 350);
       setTimeout(reset, 700);
         break;
   }
@@ -489,12 +486,12 @@ function puddleChat(e) {
     case 65: 
       puddleA.display("You know, I don't think that's a good idea right now.", 500, 50);
       playerScore -= 5;
-      collisionAvoid(puddle);
+      collisionAvoid(puddle, 450);
       setTimeout(reset, 800);
         break;
     case 70:
       puddleA.display("That's probably for the best. We have things to do.", 500, 50);
-      collisionAvoid(puddle);
+      collisionAvoid(puddle, 450);
       setTimeout(reset, 800);
         break;
   }
@@ -512,7 +509,7 @@ function owlChat(e) {
   switch(response) {
     case 70: 
       owlA.display("'What a shame. See you around, Fox.'", 500, 50);
-      collisionAvoid(owl);
+      collisionAvoid(owl, 250);
       playerScore -= 50;
       setTimeout(reset, 800);
         break;
@@ -525,18 +522,22 @@ function owlChat(e) {
         switch(response) {
           case 81: 
             owlA.display("Well, I'll have a look. Thanks, Fox.", 500, 50);
+            owlB.display('');
             playerScore -= 30;
-            collisionAvoid(owl);
+            collisionAvoid(owl, 250);
             setTimeout(reset, 800);
             break;
           case 82:
             owlA.display("Thanks for the help! Say hi to the cat for me, okay?", 500, 50);
-            collisionAvoid(owl);
+            playerScore += 60;
+            owlB.display('');
+            collisionAvoid(owl, 250);
             setTimeout(reset, 1200);
               break;
         }
       }, false)();
-      collisionAvoid(owl);
+      collisionAvoid(owl, 250);
+      owlB.display('');
       setTimeout(reset, 500);
       owlA = '';
       owlB = '';
@@ -548,9 +549,10 @@ function dogChat(e) {
   rightArrowPress = false;
   var dogA = new DialogueBox(300,100,1000,100);
   dogA.display("Grrrrr. Arf! Arf!", 500, 50);
-  collisionAvoid(dog);
+  //behaving strangely: take a look
+  collisionAvoid(dog, 450);
   setTimeout(reset, 1000);
-  dogA = '';
+  // dogA = '';
 }
 
 
@@ -562,14 +564,14 @@ function catChat(e) {
   switch(response) {
     case 70: 
       catA.display("'Nice to see you again, Fox. You're almost there.'" , 500, 50);
-      collisionAvoid(cat);
-      playerScore -= 90;
+      collisionAvoid(cat, 250);
+      playerScore += 40;
       setTimeout(reset, 500);
         break;
     case 65:
       catA.display("Wow. You must really be hungry.", 500, 50);
-      collisionAvoid(cat);
-      playerScore += 40;
+      collisionAvoid(cat, 250);
+      playerScore -= 90;
       setTimeout(reset, 500);
         break;
   }
@@ -578,22 +580,14 @@ function catChat(e) {
 
 //need to allow collided obstacles to continue movement after dialogue
 // obstacle.x += obstacle.vx;
-function collisionAvoid(sprite) {
-  sprite.x = sprite.x - 250;
+function collisionAvoid(sprite, offset) {
+  sprite.x = sprite.x - offset;
   collided = false;
 }
 
 function reset() {
   window.requestAnimationFrame(draw);
 }
-
-var winAlert = {
-  display: function(textToDisplay,x,y) {
-    ctx.font = '50px "Taviraj", sans-serif';
-    ctx.fillStyle = 'rgba(191,63,191,.8)';
-    ctx.fillText (textToDisplay, x, y);
-  }
-};
 
 
 window.requestAnimationFrame(draw);

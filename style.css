@@ -18,7 +18,7 @@ body {
   width: 800px;
   height: 400px;
   position: relative;
-  margin: 20px auto 0 auto;
+  margin: 0 auto;
   background-image: url('assets/city-bg.png')
 }
 
@@ -76,12 +76,13 @@ h1 {
 .credits {
   background-color: rgba(255,255,255,.6);
   width: 400px;
-  height: 300px;
+  height: 340px;
   border: 1px solid;
   margin: 0 auto;
   border-radius: 15px;
   padding: 20px;
   margin-top: -15px;
+  text-indent: 20px;
 }
 
 a {
