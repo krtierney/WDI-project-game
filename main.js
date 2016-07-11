@@ -465,7 +465,7 @@ function puddleChat(e) {
   var puddleA = new DialogueBox(300,100,1000,100);
   puddleA.display("*sniff* Smells like another fox. Look for him? A for yes; F for no.", 500, 50);
   aKeyPressFunction = function() {
-    puddleA.display("You know, I don't think that's a good idea right now.", 500, 50);
+    puddleA.display("Okay. Let's keep an eye out.", 500, 50);
     playerScore -= 5;
     collisionAvoid(puddle, 450);
     setTimeout(reset, 800);
@@ -485,8 +485,8 @@ function owlChat(e) {
   owlA.display("'Hello there, Fox. Have you seen any mice?'", 500, 50);
   owlB.display("Press A to help the owl. Press F if you'd rather not.", 500, 50);
   aKeyPressFunction = function() {
-    owlA.display("'You have? Where?' Press A for Relay Building. Press F for the heath.", 500, 50);
-    owlB.display('',500,50);
+    owlA.display("'You have? Where?' Press A if he's heading for the Relay Building.", 500, 50);
+    owlB.display('Press F if you think the mouse is at the heath.',500,50);
     aKeyPressFunction  = function() {
       owlA.display("Well, I'll have a look. Thanks, Fox.", 500, 50);
       owlB.display('',500,50);
@@ -507,7 +507,7 @@ function owlChat(e) {
   fKeyPressFunction = function() {
     owlA.display("'What a shame. See you around, Fox.'", 500, 50);
     fox.draw();
-    collisionAvoid(owl, 250);
+    collisionAvoid(owl, 200);
     playerScore -= 50;
     setTimeout(reset, 800);
   };
@@ -516,11 +516,11 @@ function owlChat(e) {
 function dogChat(e) {
   rightArrowPress = false;
   var dogA = new DialogueBox(300,100,1000,100);
-  dogA.display("Grrrrr. Arf! Arf!", 500, 50);
+  dogA.display("'Grrrrr. Arf! Arf!' Press A to flee.", 500, 50);
   aKeyPressFunction = function() {
     playerScore -= 15;
-    collisionAvoid(dog, 450);
-    setTimeout(reset, 1000);
+    collisionAvoid(dog, 550);
+    setTimeout(reset, 300);
   };
 }
 
@@ -531,15 +531,15 @@ function catChat(e) {
   catA.display("Cat! Friend or Food? F for friend. A for food. Choose wisely.", 500, 50);
   fKeyPressFunction = function() {
     catA.display("'Nice to see you again, Fox. You're almost there.'" , 500, 50);
-    collisionAvoid(cat, 250);
+    collisionAvoid(cat, 350);
     playerScore += 40;
-    setTimeout(reset, 500);
+    setTimeout(reset, 700);
   };
   aKeyPressFunction = function() {
     catA.display("Wow. You must really be hungry.", 500, 50);
-    collisionAvoid(cat, 250);
+    collisionAvoid(cat, 350);
     playerScore -= 90;
-    setTimeout(reset, 500);
+    setTimeout(reset, 700);
   };
 }
 
