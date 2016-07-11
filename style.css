@@ -19,7 +19,7 @@ body {
   height: 400px;
   position: relative;
   margin: 0 auto;
-  background-image: url('assets/city-bg.png')
+  background-image: url('assets/city-bg.png');
 }
 
 #mute {

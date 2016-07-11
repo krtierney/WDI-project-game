@@ -1,4 +1,5 @@
 //---------Audio Player mute/play toggle--------//
+(function() {
 document.getElementById('mute').addEventListener('click', toggleAudio);
 var playing = true;
 
@@ -46,7 +47,7 @@ foxImage.src = 'assets/fox-night.png';
 var fox = {
     x: 0,
     y: 600,
-    vx: 2, //reset to 1 after testing
+    vx: 2,
     vy: 2,
     draw: function() {
       ctx.drawImage(foxImage, this.x, this.y, 320, 200);
@@ -66,13 +67,9 @@ Sprite.prototype.draw = function(image) {
   ctx.drawImage(image, this.x, this.y);
 }
 
-var catImage = new Image();              
+var catImage = new Image();          
 catImage.src = 'assets/cat.png'; 
 var cat = new Sprite(1260, 600, 0, 0);
-
-// var mouseChatImage = new Image();              
-// mouseChatImage.src = 'assets/mouse-chat.png';  
-// var mouseChat = new Sprite(1320,750,-2,0)
 
 var mouseImage = new Image();              
 mouseImage.src = 'assets/mouse.png';  
@@ -118,9 +115,9 @@ var fireworks = new Sprite(800,75,0,0);
 
 //-------Construct a streetlamp---------//
 function StreetLamp(x, y, vx) {
-  this.x = x; //448*2
-  this.y = y; //196;*2
-  this.vx = vx; //.5;*2
+  this.x = x;
+  this.y = y;
+  this.vx = vx;
   this.vy = 0;
 }
 
@@ -172,21 +169,17 @@ DialogueBox.prototype.display = function(textToDisplay,xOff,yOff) {
   ctx.fillText (textToDisplay, this.x+xOff, this.y+yOff);
 }
 
-var winAlert = {
-  display: function(textToDisplay,x,y) {
-    ctx.font = '50px "Taviraj", sans-serif';
-    ctx.fillStyle = 'rgba(191,63,191,.8)';
-    ctx.fillText (textToDisplay, x, y);
-  }
-};
+var winAlertDisplay = function(textToDisplay,x,y) {
+  ctx.font = '50px "Taviraj", sans-serif';
+  ctx.fillStyle = 'rgba(191,63,191,.8)';
+  ctx.fillText (textToDisplay, x, y);
+}
 
 //----Main animation loop function----//
 
 function draw() {
   // console.log("Drawing...");
   ctx.clearRect(0,0, canvas.width, canvas.height);
-  fox.draw();
-  lamp.draw();
   keyPadControls();
 
   //Starting screen
@@ -204,8 +197,8 @@ function draw() {
 
 
   if (screenCount === 1) {
-    spawnSprite(mouse,mouseImage);
-    collisionCheck(mouse);
+    mouse.draw(mouseImage);
+    collisionCheck(mouse, 220, 170);
     if ((collided === true) && (screenCount === 1)) {
         mouseChat();
         shouldDraw = false;
@@ -213,15 +206,15 @@ function draw() {
   };
   
   if (screenCount === 2) {
-    spawnSprite(owlFlying,owlFlyingImage);
+    owlFlying.draw(owlFlyingImage);
     owlFlying.x += owlFlying.vx;
     owlFlying.y += owlFlying.vy;
   };
 
   if (screenCount === 3) {
-    spawnSprite(trash,trashImage);
+    trash.draw(trashImage);
     fixedObstacleShift(trash);
-    collisionCheck(trash);
+    staticCollision(trash, 230, 170);
     if ((collided === true) && (screenCount === 3)) {
       trashChat();
       shouldDraw = false;
@@ -229,59 +222,59 @@ function draw() {
   };
 
   if (screenCount === 4) {
-    spawnSprite(owlFlying,owlFlyingImage);
-    owlFlying.x += owlFlying.vx;
+    owlFlying.draw(owlFlyingImage);
+    owlFlying.x += .5*owlFlying.vx;
     owlFlying.y += owlFlying.vy;
   };
 
   if (screenCount === 5) {
-    spawnSprite(puddle,puddleImage);
+    puddle.draw(puddleImage);
     fixedObstacleShift(puddle);
-    staticCollision(puddle);
+    staticCollision(puddle,220, 170);
     if ((collided === true) && (screenCount === 5)) {
       puddleChat();
       shouldDraw = false;
     }
   };
 
-  if (screenCount === 7) {
-    spawnSprite(owl,owlImage);
+  if (screenCount === 6) {
+    owl.draw(owlImage);
     fixedObstacleShift(owl);
-    staticCollision(owl);
-    if ((collided === true) && (screenCount === 7)) {
+    staticCollision(owl, 220, 170);
+    if ((collided === true) && (screenCount === 6)) {
       owlChat();
       shouldDraw = false;
     }
   };
 
-  if (screenCount === 9) {
-    spawnSprite(dog,dogImage);
-    collisionCheck(dog);
-    if ((collided === true) && (screenCount === 9)) {
+  if (screenCount === 7) {
+    dog.draw(dogImage);
+    collisionCheck(dog, 220, 170);
+    if ((collided === true) && (screenCount === 7)) {
       dogChat();
       shouldDraw = false;
     }
   };
   
-  if (screenCount === 10) {
-    spawnSprite(cat,catImage);
-    staticCollision(cat);
-    if ((collided === true) && (screenCount === 10)) {
+  if (screenCount === 8) {
+    cat.draw(catImage);
+    staticCollision(cat, 270, 170);
+    if ((collided === true) && (screenCount === 8)) {
       catChat();
       shouldDraw = false;
     }
   };
  
-  if (screenCount === 12) {
-    if (fox.x >= 600){
+  if (screenCount === 10) {
+    if (fox.x >= 500){
       fox.vx = 0;
       if (playerScore > 0) {
-        winAlert.display('You made it! Well done, you.', 500, 150);
-        winAlert.display('Your score is ' + playerScore, 500, 200);
-        spawnSprite(house, houseImage);
-        spawnSprite(food, foodImage);
-        spawnSprite(fireworksp, fireworkspImage);
-        spawnSprite(fireworks, fireworksImage);
+        winAlertDisplay('You made it! Well done, you.', 500, 150);
+        winAlertDisplay('Your score is ' + playerScore, 500, 200);
+        house.draw(houseImage);
+        food.draw(foodImage);
+        fireworksp.draw(fireworkspImage);
+        fireworks.draw(fireworksImage);
       } else if (playerScore <= 0) {
         var loseBox = new DialogueBox(350,200,900,100);
         loseBox.display("Sorry, you won't find it tonight. Score: " + playerScore, 500, 50);
@@ -342,10 +335,12 @@ function keyDown(e) {
     case 37: leftArrowPress = true; 
       break;
     case 38: upArrowPress = true;
+      e.preventDefault();
       break;
     case 39: rightArrowPress = true;
       break;
     case 40: downArrowPress = true;
+      e.preventDefault();
       break;
 
   }
@@ -380,16 +375,12 @@ function keyUp(e) {
   }
 }
 
-function spawnSprite(sprite, image) {
-  sprite.draw(image);
-}
-
-function collisionCheck(sprite) {
+function collisionCheck(sprite, xOffset, yOffset) {
     var ox = sprite.x += sprite.vx;
     var oy = sprite.y += sprite.vy;
     var fx = fox.x;
-    var fy = fox.y+170;
-    if (((fx+240) >= ox) && ((fx-22) <= ox) && (fy >= oy)) {
+    var fy = fox.y+yOffset;
+    if (((fx+xOffset) >= ox) && ((fx-22) <= ox) && (fy >= oy)) {
       collided = true;
     } else {
       collided = false;
@@ -399,9 +390,9 @@ function collisionCheck(sprite) {
     };
   }
 
-function staticCollision(sprite) {
-    var fy = fox.y+170;
-    if (((fox.x+220) >= sprite.x) && ((fox.x-22) <= sprite.x)) {
+function staticCollision(sprite, xOffset, yOffset) {
+    var fy = fox.y+yOffset;
+    if (((fox.x+xOffset) >= sprite.x) && ((fox.x-22) <= sprite.x)) {
       collided = true;
     };
   }
@@ -410,13 +401,11 @@ function staticCollision(sprite) {
 
 //--------Obstacle dialogue flow and content----------//
 function mouseChat() {
-  console.log("mouseChat called");
   rightArrowPress = false;
   var mouseA = new DialogueBox(300,100,1000,100);
   mouseA.display("You've found a mouse. Are you feeling hungry? A for yes; F for no.", 500, 50);
 
   aKeyPressFunction = function() {
-    console.log("aKeyPressFunction called...");
     mouseA.display("Oh dear. Are you going to eat this mouse? A for yes; F for no.", 500, 50);
     // next akeyPressFunction
     aKeyPressFunction = function() {
@@ -428,7 +417,7 @@ function mouseChat() {
 
     fKeyPressFunction = function() {
       mouseA.display("Well, that's a relief! He's heading home to the heath.", 500, 50);
-      collisionAvoid(mouse);
+      collisionAvoid(mouse, 300);
       setTimeout(reset, 800);
 
     };
@@ -436,7 +425,7 @@ function mouseChat() {
 
   fKeyPressFunction = function() {
     mouseA.display("Well, that's a relief! Off you pop, then.", 500, 50);
-    collisionAvoid(mouse);
+    collisionAvoid(mouse, 300);
     setTimeout(reset, 800);
   };
 }
@@ -491,7 +480,7 @@ function owlChat(e) {
       owlA.display("Well, I'll have a look. Thanks, Fox.", 500, 50);
       owlB.display('',500,50);
       playerScore -= 30;
-      collisionAvoid(owl, 250);
+      collisionAvoid(owl, 1600);
       setTimeout(reset, 800);
     };
 
@@ -506,8 +495,8 @@ function owlChat(e) {
 
   fKeyPressFunction = function() {
     owlA.display("'What a shame. See you around, Fox.'", 500, 50);
-    fox.draw();
-    collisionAvoid(owl, 200);
+    owlB.display('',500,50);
+    collisionAvoid(owl, 1600);
     playerScore -= 50;
     setTimeout(reset, 800);
   };
@@ -547,6 +536,7 @@ function catChat(e) {
 // obstacle.x += obstacle.vx; ??
 function collisionAvoid(sprite, offset) {
   sprite.x = sprite.x - offset;
+  sprite.x += sprite.vx;
   collided = false;
 }
 
@@ -558,3 +548,4 @@ function reset() {
 
 window.requestAnimationFrame(draw);
 
+}());
