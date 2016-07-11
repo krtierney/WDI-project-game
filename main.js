@@ -111,7 +111,18 @@ var fireworksImage = new Image();
 fireworksImage.src = 'assets/fireworks.png';
 var fireworks = new Sprite(800,75,0,0);
 
+//-------Progress Bar---------//
 
+var progressBar = function(screenCount) {
+  ctx.beginPath();
+  ctx.rect(0,0,1600,20);
+  ctx.fillStyle = 'rgba(255,255,255,.3)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.rect(0,0,((screenCount*123)+(fox.x*.075)), 20);
+  ctx.fillStyle = 'rgba(0,0,0,.4)';
+  ctx.fill();
+}
 
 //-------Construct a streetlamp---------//
 function StreetLamp(x, y, vx) {
@@ -186,12 +197,12 @@ function draw() {
   if (screenCount === 0) {
     var openingBox = new DialogueBox(400,50,800,100);
     if (screenCount === 0 && fox.x<1600 && fox.x>700) {
-      ctx.clearRect(0,0, canvas.width, canvas.height);
       openingBox.display('Where are you off to?',400,65);
     } else if (screenCount === 0 && fox.x<700 && fox.x>100) {
       openingBox.display('Good evening, Fox.',400,65);
     }
   }
+  progressBar(screenCount);
   lamp.draw();
   fox.draw();
 
