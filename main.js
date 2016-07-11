@@ -38,7 +38,7 @@ var shouldDraw = true;
 var screenCount = 0;
 var playerScore = 100;
 
-var collided = false;
+var hasCollided = false;
 
 
 //------Sprites and image assets defined here------//
@@ -199,7 +199,7 @@ function draw() {
   if (screenCount === 1) {
     mouse.draw(mouseImage);
     collisionCheck(mouse, 220, 170);
-    if ((collided === true) && (screenCount === 1)) {
+    if ((hasCollided === true) && (screenCount === 1)) {
         mouseChat();
         shouldDraw = false;
     }
@@ -214,8 +214,8 @@ function draw() {
   if (screenCount === 3) {
     trash.draw(trashImage);
     fixedObstacleShift(trash);
-    staticCollision(trash, 230, 170);
-    if ((collided === true) && (screenCount === 3)) {
+    staticCollision(trash,230,170);
+    if ((hasCollided === true) && (screenCount === 3)) {
       trashChat();
       shouldDraw = false;
     }
@@ -231,7 +231,7 @@ function draw() {
     puddle.draw(puddleImage);
     fixedObstacleShift(puddle);
     staticCollision(puddle,220, 170);
-    if ((collided === true) && (screenCount === 5)) {
+    if ((hasCollided === true) && (screenCount === 5)) {
       puddleChat();
       shouldDraw = false;
     }
@@ -241,7 +241,7 @@ function draw() {
     owl.draw(owlImage);
     fixedObstacleShift(owl);
     staticCollision(owl, 220, 170);
-    if ((collided === true) && (screenCount === 6)) {
+    if ((hasCollided === true) && (screenCount === 6)) {
       owlChat();
       shouldDraw = false;
     }
@@ -250,7 +250,7 @@ function draw() {
   if (screenCount === 7) {
     dog.draw(dogImage);
     collisionCheck(dog, 220, 170);
-    if ((collided === true) && (screenCount === 7)) {
+    if ((hasCollided === true) && (screenCount === 7)) {
       dogChat();
       shouldDraw = false;
     }
@@ -258,8 +258,8 @@ function draw() {
   
   if (screenCount === 8) {
     cat.draw(catImage);
-    staticCollision(cat, 270, 170);
-    if ((collided === true) && (screenCount === 8)) {
+    staticCollision(cat, 300, 170);
+    if ((hasCollided === true) && (screenCount === 8)) {
       catChat();
       shouldDraw = false;
     }
@@ -381,20 +381,21 @@ function collisionCheck(sprite, xOffset, yOffset) {
     var fx = fox.x;
     var fy = fox.y+yOffset;
     if (((fx+xOffset) >= ox) && ((fx-22) <= ox) && (fy >= oy)) {
-      collided = true;
+      hasCollided = true;
+      shouldDraw = false;
     } else {
-      collided = false;
-    };
-    if (collided) {
-      sprite.vx = 0;
-    };
+      hasCollided = false;
+      shouldDraw = true;
+    }
   }
 
 function staticCollision(sprite, xOffset, yOffset) {
     var fy = fox.y+yOffset;
     if (((fox.x+xOffset) >= sprite.x) && ((fox.x-22) <= sprite.x)) {
-      collided = true;
-    };
+      hasCollided = true;
+    } else {
+      hasCollided = false;
+    }
   }
 
 
@@ -525,7 +526,7 @@ function catChat(e) {
     setTimeout(reset, 700);
   };
   aKeyPressFunction = function() {
-    catA.display("Wow. You must really be hungry.", 500, 50);
+    catA.display("Wow. You must really be hungry. Too bad.", 500, 50);
     collisionAvoid(cat, 350);
     playerScore -= 90;
     setTimeout(reset, 700);
@@ -537,7 +538,7 @@ function catChat(e) {
 function collisionAvoid(sprite, offset) {
   sprite.x = sprite.x - offset;
   sprite.x += sprite.vx;
-  collided = false;
+  hasCollided = false;
 }
 
 function reset() {
