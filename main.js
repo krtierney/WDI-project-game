@@ -98,10 +98,6 @@ var trashImage = new Image();
 trashImage.src = 'assets/trash.png';  
 var trash = new Sprite(1280,680,.5,0);
 
-var shardsImage = new Image();              
-shardsImage.src = 'assets/shards.png';  
-var shards = new Sprite(1200,700,.5,0);
-
 var houseImage = new Image();
 houseImage.src = 'assets/house.png';
 var house = new Sprite(1100,100,0,0);
@@ -203,7 +199,9 @@ function draw() {
       openingBox.display('Good evening, Fox.',400,65);
     }
   }
+  lamp.draw();
   fox.draw();
+
 
   if (screenCount === 1) {
     spawnSprite(mouse,mouseImage);
@@ -214,7 +212,7 @@ function draw() {
     }
   };
   
-  if (screenCount === 2 || screenCount === 4) {
+  if (screenCount === 2) {
     spawnSprite(owlFlying,owlFlyingImage);
     owlFlying.x += owlFlying.vx;
     owlFlying.y += owlFlying.vy;
@@ -223,11 +221,17 @@ function draw() {
   if (screenCount === 3) {
     spawnSprite(trash,trashImage);
     fixedObstacleShift(trash);
-    staticCollision(trash);
+    collisionCheck(trash);
     if ((collided === true) && (screenCount === 3)) {
       trashChat();
       shouldDraw = false;
     }
+  };
+
+  if (screenCount === 4) {
+    spawnSprite(owlFlying,owlFlyingImage);
+    owlFlying.x += owlFlying.vx;
+    owlFlying.y += owlFlying.vy;
   };
 
   if (screenCount === 5) {
@@ -250,35 +254,25 @@ function draw() {
     }
   };
 
-  if (screenCount === 8) {
-    spawnSprite(shards,shardsImage);
-    fixedObstacleShift(shards);
-    staticCollision(shards);
-    if ((collided === true) && (screenCount === 8)) {    
-      brokenGlass();
-      shouldDraw = false;
-    };
-  }
-
-  if (screenCount === 10) {
+  if (screenCount === 9) {
     spawnSprite(dog,dogImage);
     collisionCheck(dog);
-    if ((collided === true) && (screenCount === 10)) {
+    if ((collided === true) && (screenCount === 9)) {
       dogChat();
       shouldDraw = false;
     }
   };
   
-  if (screenCount === 11) {
+  if (screenCount === 10) {
     spawnSprite(cat,catImage);
     staticCollision(cat);
-    if ((collided === true) && (screenCount === 11)) {
+    if ((collided === true) && (screenCount === 10)) {
       catChat();
       shouldDraw = false;
     }
   };
  
-  if (screenCount === 13) {
+  if (screenCount === 12) {
     if (fox.x >= 600){
       fox.vx = 0;
       if (playerScore > 0) {
@@ -299,6 +293,7 @@ function draw() {
   if(shouldDraw) { window.requestAnimationFrame(draw); }
 } // end of draw loop
 
+//----------Functions (outside animation loop)-----------//
 
 function fixedObstacleShift(sprite) {
   if (rightArrowPress) {
@@ -332,7 +327,7 @@ function keyPadControls() {
   };
 
   if (lamp.x < -40) {
-    lamp.x = 1610;
+    lamp.x = 1600;
   };
 }
 
@@ -384,12 +379,6 @@ function keyUp(e) {
       break;
   }
 }
-
-
-
-
-//----------Functions (outside animation loop)-----------//
-//---------chronological in order of appearance---------//
 
 function spawnSprite(sprite, image) {
   sprite.draw(image);
@@ -452,7 +441,6 @@ function mouseChat() {
   };
 }
 
-
 function trashChat(e) {
   rightArrowPress = false;
   var trashA = new DialogueBox(300,100,1000,100);
@@ -470,7 +458,6 @@ function trashChat(e) {
   }
 
 }
-
 
 function puddleChat(e) {
   rightArrowPress = false;
@@ -491,7 +478,6 @@ function puddleChat(e) {
   }
 }
 
-
 function owlChat(e) {
   rightArrowPress = false;
   var owlA = new DialogueBox(300,100,1000,100);
@@ -499,7 +485,8 @@ function owlChat(e) {
   owlA.display("'Hello there, Fox. Have you seen any mice?'", 500, 50);
   owlB.display("Press A to help the owl. Press F if you'd rather not.", 500, 50);
   aKeyPressFunction = function() {
-    owlB.display("'You have? Where?' Press A for Relay Building. Press F for the heath.", 500, 50);
+    owlA.display("'You have? Where?' Press A for Relay Building. Press F for the heath.", 500, 50);
+    owlB.display('',500,50);
     aKeyPressFunction  = function() {
       owlA.display("Well, I'll have a look. Thanks, Fox.", 500, 50);
       owlB.display('',500,50);
@@ -512,19 +499,19 @@ function owlChat(e) {
       owlA.display("Thanks for the help! Say hi to the cat for me, okay?", 500, 50);
       owlB.display('', 500,50);
       playerScore += 60;
-      screenCount = 9;
+      screenCount = 8;
       setTimeout(reset, 1200);
     };
   };
 
   fKeyPressFunction = function() {
     owlA.display("'What a shame. See you around, Fox.'", 500, 50);
+    fox.draw();
     collisionAvoid(owl, 250);
     playerScore -= 50;
     setTimeout(reset, 800);
   };
 }
-
 
 function dogChat(e) {
   rightArrowPress = false;
@@ -554,13 +541,6 @@ function catChat(e) {
     playerScore -= 90;
     setTimeout(reset, 500);
   };
-}
-
-function brokenGlass() {
-  fox.vx = fox.vx*.7;
-  var ouchBox = new DialogueBox(300,100,1000,100);
-  ouchBox.display = ("Ouch! That broken glass really hurts. Take it slow, now.", 500,50);
-  setTimeout(reset, 1000);
 }
 
 //need to allow collided obstacles to continue movement after dialogue
