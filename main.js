@@ -1,5 +1,7 @@
+//---------Audio Player mute/play toggle--------//
 document.getElementById('mute').addEventListener('click', toggleAudio);
 var playing = true;
+
 function toggleAudio() {
   var audio = document.getElementsByTagName("audio")[0];
   if (playing) {
@@ -12,17 +14,13 @@ function toggleAudio() {
   playing = !playing;
 }
 
+//--------Begin Canvas Game Content--------//
 var canvas = document.getElementById('fox-game');
 var ctx = canvas.getContext('2d');
 
 window.onload = draw;
-// if (window.devicePixelRatio === 2) {
   canvas.width = 1600;
   canvas.height = 800;
-// } else {
-//   canvas.width = 800;
-//   canvas.height = 400;
-// }
 
 canvas.style.width = '800px';
 canvas.style.height = '400px';
@@ -32,6 +30,9 @@ var leftArrowPress = false;
 var upArrowPress = false;
 var downArrowPress = false;
 var spaceBarPress = false;
+var aKeyPressFunction = null;
+var fKeyPressFunction = null;
+var shouldDraw = true;
 
 var screenCount = 0;
 var playerScore = 100;
@@ -186,10 +187,10 @@ var winAlert = {
 //----Main animation loop function----//
 
 function draw() {
+  // console.log("Drawing...");
   ctx.clearRect(0,0, canvas.width, canvas.height);
   fox.draw();
-  document.addEventListener('keydown', keyDown, false);
-  document.addEventListener('keyup', keyUp, false);
+  lamp.draw();
   keyPadControls();
 
   //Starting screen
@@ -202,21 +203,14 @@ function draw() {
       openingBox.display('Good evening, Fox.',400,65);
     }
   }
-
-
-  lamp.draw();
   fox.draw();
-
-  document.addEventListener('keydown', keyDown, false);
-  document.addEventListener('keyup', keyUp, false);
-  keyPadControls();
 
   if (screenCount === 1) {
     spawnSprite(mouse,mouseImage);
     collisionCheck(mouse);
     if ((collided === true) && (screenCount === 1)) {
-      document.addEventListener('keydown', mouseChat, false);
-      mouseChat();
+        mouseChat();
+        shouldDraw = false;
     }
   };
   
@@ -231,8 +225,8 @@ function draw() {
     fixedObstacleShift(trash);
     staticCollision(trash);
     if ((collided === true) && (screenCount === 3)) {
-      document.addEventListener('keydown', trashChat, false);
       trashChat();
+      shouldDraw = false;
     }
   };
 
@@ -241,8 +235,8 @@ function draw() {
     fixedObstacleShift(puddle);
     staticCollision(puddle);
     if ((collided === true) && (screenCount === 5)) {
-      document.addEventListener('keydown', puddleChat, false);
       puddleChat();
+      shouldDraw = false;
     }
   };
 
@@ -251,42 +245,38 @@ function draw() {
     fixedObstacleShift(owl);
     staticCollision(owl);
     if ((collided === true) && (screenCount === 7)) {
-      document.addEventListener('keydown', owlChat, false);
       owlChat();
+      shouldDraw = false;
     }
   };
 
-  if (screenCount === 9) {
-    spawnSprite(dog,dogImage);
-    collisionCheck(dog);
-    if ((collided === true) && (screenCount === 9)) {
-      dogChat();
-      playerScore -= 15;
+  if (screenCount === 8) {
+    spawnSprite(shards,shardsImage);
+    fixedObstacleShift(shards);
+    staticCollision(shards);
+    if ((collided === true) && (screenCount === 8)) {    
+      brokenGlass();
+      shouldDraw = false;
     };
   }
-  
+
   if (screenCount === 10) {
-    spawnSprite(cat,catImage);
-    staticCollision(cat);
+    spawnSprite(dog,dogImage);
+    collisionCheck(dog);
     if ((collided === true) && (screenCount === 10)) {
-      document.addEventListener('keydown', catChat, false);
-      catChat();
+      dogChat();
+      shouldDraw = false;
     }
   };
   
   if (screenCount === 11) {
-    spawnSprite(shards,shardsImage);
-    fixedObstacleShift(shards);
-    staticCollision(shards);
-    //none of this works for some reason...
-    if ((collided === true) && (screenCount === 11)) {    
-      fox.vx = 1;
-      var ouchBox = new DialogueBox(300,100,1000,100);
-      ouchBox.display = ("Ouch! That broken glass really hurts. Take it slow, now.", 500,50);
-      setTimeout(reset,800);
-    };
-    ouchBox = '';
-  }
+    spawnSprite(cat,catImage);
+    staticCollision(cat);
+    if ((collided === true) && (screenCount === 11)) {
+      catChat();
+      shouldDraw = false;
+    }
+  };
  
   if (screenCount === 13) {
     if (fox.x >= 600){
@@ -300,11 +290,14 @@ function draw() {
         spawnSprite(fireworks, fireworksImage);
       } else if (playerScore <= 0) {
         var loseBox = new DialogueBox(350,200,900,100);
-        //Not sure what broke this display, but figure out.
         loseBox.display("Sorry, you won't find it tonight. Score: " + playerScore, 500, 50);
       }
     }
-  };
+  }
+
+
+  if(shouldDraw) { window.requestAnimationFrame(draw); }
+} // end of draw loop
 
 
 function fixedObstacleShift(sprite) {
@@ -342,6 +335,10 @@ function keyPadControls() {
     lamp.x = 1610;
   };
 }
+
+document.addEventListener('keydown', keyDown, false);
+document.addEventListener('keyup', keyUp, false);
+
 function keyDown(e) {
   var code = e.keyCode;
   switch (code) {
@@ -355,6 +352,7 @@ function keyDown(e) {
       break;
     case 40: downArrowPress = true;
       break;
+
   }
 }
 
@@ -371,10 +369,20 @@ function keyUp(e) {
       break;
     case 40: downArrowPress = false;
       break;
+    case 65: 
+      console.log(aKeyPressFunction)
+      if(aKeyPressFunction) {
+        console.log("Calling aKeyPressFunction");
+        aKeyPressFunction();
+      }
+      break;
+    case 70:
+      if(fKeyPressFunction) {
+        console.log("Calling fKeyPressFunction");
+        fKeyPressFunction();
+      }
+      break;
   }
-}
-
-  window.requestAnimationFrame(draw); 
 }
 
 
@@ -392,7 +400,7 @@ function collisionCheck(sprite) {
     var oy = sprite.y += sprite.vy;
     var fx = fox.x;
     var fy = fox.y+170;
-    if (((fx+220) >= ox) && ((fx-22) <= ox) && (fy >= oy)) {
+    if (((fx+240) >= ox) && ((fx-22) <= ox) && (fy >= oy)) {
       collided = true;
     } else {
       collided = false;
@@ -412,44 +420,36 @@ function staticCollision(sprite) {
 
 
 //--------Obstacle dialogue flow and content----------//
-function mouseChat(e) {
+function mouseChat() {
+  console.log("mouseChat called");
   rightArrowPress = false;
   var mouseA = new DialogueBox(300,100,1000,100);
   mouseA.display("You've found a mouse. Are you feeling hungry? A for yes; F for no.", 500, 50);
-  var response = '';
-  response = e.keyCode;
-  switch(response) {
-    case 70: 
-      mouseA.display("Well, that's a relief! Off you pop, then.", 500, 50);
-      collisionAvoid(mouse, 250);
-      setTimeout(reset, 800);
-        break;
-    case 65:
-      mouseA.display("Oh dear. Are you going to eat this mouse? Q for yes; R for no.", 500, 50);
-      document.addEventListener('keydown', function(e) {
-        mouseA.display("Oh dear. Are you going to eat this mouse? Q for yes; R for no.", 500, 50);
-        var response = e.keyCode;
-        switch(response) {
-          case 81: 
-            mouseA.display("You're slightly less hungry. Move on now.", 500, 50);
-            playerScore -= 5;
-            collisionAvoid(mouse, 250);
-            screenCount = 2;
-            setTimeout(reset, 500);
-            break;
-          case 82:
-            mouseA.display("Well, that's a relief! He's heading home to the heath.", 500, 50);
-            collisionAvoid(mouse, 250);
-            setTimeout(reset, 500);
-              break;
-        }
-      }, false)();
 
-      collisionAvoid(mouse, 250);
-      setTimeout(reset, 500);
-        break;
-  }
-  mouseA = '';
+  aKeyPressFunction = function() {
+    console.log("aKeyPressFunction called...");
+    mouseA.display("Oh dear. Are you going to eat this mouse? A for yes; F for no.", 500, 50);
+    // next akeyPressFunction
+    aKeyPressFunction = function() {
+      mouseA.display("You're slightly less hungry. Move on now.", 500, 50);
+      playerScore -= 5;
+      screenCount = 2;
+      setTimeout(reset, 800);
+    };
+
+    fKeyPressFunction = function() {
+      mouseA.display("Well, that's a relief! He's heading home to the heath.", 500, 50);
+      collisionAvoid(mouse);
+      setTimeout(reset, 800);
+
+    };
+  };
+
+  fKeyPressFunction = function() {
+    mouseA.display("Well, that's a relief! Off you pop, then.", 500, 50);
+    collisionAvoid(mouse);
+    setTimeout(reset, 800);
+  };
 }
 
 
@@ -457,91 +457,72 @@ function trashChat(e) {
   rightArrowPress = false;
   var trashA = new DialogueBox(300,100,1000,100);
   trashA.display("Mmm, a pile of rubbish! Smell tasty? A for yes; F for no.", 500, 50);
-  var response = '';
-  response = e.keyCode;
-  switch(response) {
-    case 65: 
+  aKeyPressFunction = function() {
       trashA.display("You found some edible scraps, but got your paws dirty.", 500, 50);
       collisionAvoid(trash, 350);
       playerScore -= 5;
       setTimeout(reset, 700);
-        break;
-    case 70:
-      trashA.display("Yeah, you're right. Let's skip it.", 500, 50);
-      collisionAvoid(trash, 350);
-      setTimeout(reset, 700);
-        break;
+    }
+  fKeyPressFunction = function() {
+    trashA.display("Yeah, you're right. Let's skip it.", 500, 50);
+    collisionAvoid(trash, 350);
+    setTimeout(reset, 700);
   }
-  trashA = '';
+
 }
 
 
 function puddleChat(e) {
+  rightArrowPress = false;
   //Add additional branch and fox meeting to this, time permitting
   var puddleA = new DialogueBox(300,100,1000,100);
   puddleA.display("*sniff* Smells like another fox. Look for him? A for yes; F for no.", 500, 50);
-  var response = '';
-  response = e.keyCode;
-  switch(response) {
-    case 65: 
-      puddleA.display("You know, I don't think that's a good idea right now.", 500, 50);
-      playerScore -= 5;
-      collisionAvoid(puddle, 450);
-      setTimeout(reset, 800);
-        break;
-    case 70:
-      puddleA.display("That's probably for the best. We have things to do.", 500, 50);
-      collisionAvoid(puddle, 450);
-      setTimeout(reset, 800);
-        break;
+  aKeyPressFunction = function() {
+    puddleA.display("You know, I don't think that's a good idea right now.", 500, 50);
+    playerScore -= 5;
+    collisionAvoid(puddle, 450);
+    setTimeout(reset, 800);
   }
-  puddleA = '';
+
+  fKeyPressFunction = function() {
+    puddleA.display("That's probably for the best. We have things to do.", 500, 50);
+    collisionAvoid(puddle, 450);
+    setTimeout(reset, 800);
+  }
 }
 
 
 function owlChat(e) {
+  rightArrowPress = false;
   var owlA = new DialogueBox(300,100,1000,100);
   var owlB = new DialogueBox(300,200,1000,100);
   owlA.display("'Hello there, Fox. Have you seen any mice?'", 500, 50);
   owlB.display("Press A to help the owl. Press F if you'd rather not.", 500, 50);
-  var response = '';
-  response = e.keyCode;
-  switch(response) {
-    case 70: 
-      owlA.display("'What a shame. See you around, Fox.'", 500, 50);
+  aKeyPressFunction = function() {
+    owlB.display("'You have? Where?' Press A for Relay Building. Press F for the heath.", 500, 50);
+    aKeyPressFunction  = function() {
+      owlA.display("Well, I'll have a look. Thanks, Fox.", 500, 50);
+      owlB.display('',500,50);
+      playerScore -= 30;
       collisionAvoid(owl, 250);
-      playerScore -= 50;
       setTimeout(reset, 800);
-        break;
-    //This is nearly identical to the mouseChat function, but doesn't work properly for some reason.
-    case 65:
-      owlB.display("'You have? Where?' Press Q for Relay Building. Press R for the heath.", 500, 50);
-      document.addEventListener('keydown', function(e) {
-        owlB.display("'You have? Where?' Press Q for Relay Building. Press R for the heath.", 500, 50);
-        var response = e.keyCode;
-        switch(response) {
-          case 81: 
-            owlA.display("Well, I'll have a look. Thanks, Fox.", 500, 50);
-            owlB.display('');
-            playerScore -= 30;
-            collisionAvoid(owl, 250);
-            setTimeout(reset, 800);
-            break;
-          case 82:
-            owlA.display("Thanks for the help! Say hi to the cat for me, okay?", 500, 50);
-            playerScore += 60;
-            owlB.display('');
-            collisionAvoid(owl, 250);
-            setTimeout(reset, 1200);
-              break;
-        }
-      }, false)();
-      collisionAvoid(owl, 250);
-      owlB.display('');
-      setTimeout(reset, 500);
-      owlA = '';
-      owlB = '';
-  }
+    };
+
+    fKeyPressFunction = function() {
+      owlA.display("Thanks for the help! Say hi to the cat for me, okay?", 500, 50);
+      owlB.display('', 500,50);
+      playerScore += 60;
+      screenCount = 9;
+      setTimeout(reset, 1200);
+    };
+  };
+
+  fKeyPressFunction = function() {
+    owlA.display("'What a shame. See you around, Fox.'", 500, 50);
+    collisionAvoid(owl, 250);
+    playerScore -= 50;
+    setTimeout(reset, 800);
+  };
 }
 
 
@@ -549,43 +530,48 @@ function dogChat(e) {
   rightArrowPress = false;
   var dogA = new DialogueBox(300,100,1000,100);
   dogA.display("Grrrrr. Arf! Arf!", 500, 50);
-  //behaving strangely: take a look
-  collisionAvoid(dog, 450);
-  setTimeout(reset, 1000);
-  // dogA = '';
+  aKeyPressFunction = function() {
+    playerScore -= 15;
+    collisionAvoid(dog, 450);
+    setTimeout(reset, 1000);
+  };
 }
 
 
 function catChat(e) {
+  rightArrowPress = false;
   var catA = new DialogueBox(300,100,1000,100);
   catA.display("Cat! Friend or Food? F for friend. A for food. Choose wisely.", 500, 50);
-  var response = '';
-  response = e.keyCode;
-  switch(response) {
-    case 70: 
-      catA.display("'Nice to see you again, Fox. You're almost there.'" , 500, 50);
-      collisionAvoid(cat, 250);
-      playerScore += 40;
-      setTimeout(reset, 500);
-        break;
-    case 65:
-      catA.display("Wow. You must really be hungry.", 500, 50);
-      collisionAvoid(cat, 250);
-      playerScore -= 90;
-      setTimeout(reset, 500);
-        break;
-  }
-  catA = '';
+  fKeyPressFunction = function() {
+    catA.display("'Nice to see you again, Fox. You're almost there.'" , 500, 50);
+    collisionAvoid(cat, 250);
+    playerScore += 40;
+    setTimeout(reset, 500);
+  };
+  aKeyPressFunction = function() {
+    catA.display("Wow. You must really be hungry.", 500, 50);
+    collisionAvoid(cat, 250);
+    playerScore -= 90;
+    setTimeout(reset, 500);
+  };
+}
+
+function brokenGlass() {
+  fox.vx = fox.vx*.7;
+  var ouchBox = new DialogueBox(300,100,1000,100);
+  ouchBox.display = ("Ouch! That broken glass really hurts. Take it slow, now.", 500,50);
+  setTimeout(reset, 1000);
 }
 
 //need to allow collided obstacles to continue movement after dialogue
-// obstacle.x += obstacle.vx;
+// obstacle.x += obstacle.vx; ??
 function collisionAvoid(sprite, offset) {
   sprite.x = sprite.x - offset;
   collided = false;
 }
 
 function reset() {
+  shouldDraw = true;
   window.requestAnimationFrame(draw);
 }
 
