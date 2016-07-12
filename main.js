@@ -422,6 +422,7 @@ function keyUp(e) {
 
 function touchStart(e) {
   touchActive = true;
+  e.preventDefault();
 }
 
 function touchEnd(e) {
