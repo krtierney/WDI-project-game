@@ -33,6 +33,7 @@ var downArrowPress = false;
 var spaceBarPress = false;
 var aKeyPressFunction = null;
 var fKeyPressFunction = null;
+var touchActive = false;
 var shouldDraw = true;
 
 var screenCount = 0;
@@ -341,7 +342,7 @@ function fixedObstacleShift(sprite) {
 }
 
 function keyPadControls() {
-  if (rightArrowPress) {
+  if (rightArrowPress || touchActive) {
     fox.x += fox.vx;
     lamp.x -= lamp.vx;
   } else if (leftArrowPress) {
@@ -368,6 +369,8 @@ function keyPadControls() {
 
 document.addEventListener('keydown', keyDown, false);
 document.addEventListener('keyup', keyUp, false);
+canvas.addEventListener('touchstart', touchStart, false);
+canvas.addEventListener('touchend', touchEnd, false);
 
 function keyDown(e) {
   var code = e.keyCode;
@@ -415,6 +418,14 @@ function keyUp(e) {
       }
       break;
   }
+}
+
+function touchStart(e) {
+  touchActive = true;
+}
+
+function touchEnd(e) {
+  touchActive = false;
 }
 
 function collisionCheck(sprite, xOffset, yOffset) {
