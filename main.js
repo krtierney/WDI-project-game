@@ -466,7 +466,7 @@ function mouseChat() {
     aKeyPressFunction = function() {
       mouseA.display("You're slightly less hungry. Move on now.", 500, 50);
       playerScore -= 5;
-      screenCount = 2;
+      screenCount = 3;
       setTimeout(reset, 1200);
     };
 
