@@ -173,7 +173,7 @@ function DialogueBox(x, y, w, h) {
 }
 
 DialogueBox.prototype.display = function(textToDisplay,xOff,yOff) {
-  ctx.fillStyle = 'rgba(255,255,255,.8)';
+  ctx.fillStyle = 'rgba(255,255,255,1)';
   ctx.fillRect (this.x, this.y, this.w, this.h);
   ctx.textAlign = 'center';
   ctx.font = '30px Arial';
