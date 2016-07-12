@@ -585,13 +585,13 @@ function catChat() {
   catA.display("Cat: friend or food? F for friend. A for food. Choose wisely.", 500, 50);
   fKeyPressFunction = function() {
     catA.display("'Nice to see you again, Fox. You're almost there.'" , 500, 50);
-    collisionAvoid(cat, 350);
+    collisionAvoid(cat, 400);
     playerScore += 40;
     setTimeout(reset, 1200);
   };
   aKeyPressFunction = function() {
     catA.display("Wow. You must really be hungry. Didn't recognise me?", 500, 50);
-    collisionAvoid(cat, 350);
+    collisionAvoid(cat, 400);
     playerScore -= 90;
     setTimeout(reset, 1200);
   };
